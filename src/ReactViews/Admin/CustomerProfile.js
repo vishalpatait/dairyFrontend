@@ -68,22 +68,22 @@ const CustomerProfile = props => {
     // await props
     //   ._getMilkByCustomerId(data)
     await axios
-      .post("http://localhost:8888/customerMilk/myUser", data)
+      .post("http://localhost:8080/customerMilk/myUser", data)
       .then(response => {
         let data = [];
         response.data.user.forEach((el, index) => {
           data.push({
             index: ++index,
             id: el._id ? el._id : "",
-            name: el && el.customer.name ? el && el.customer.name : "",
-            email: el && el.customer.email ? el && el.customer.email : "",
+            // name: el && el.customer.name ? el && el.customer.name : "",
+            // email: el && el.customer.email ? el && el.customer.email : "",
             quantity: el.quantity ? el.quantity : "",
             date: el.regDate ? el.regDate : ""
           });
         });
         setEntries({ data: data });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   };
@@ -92,7 +92,7 @@ const CustomerProfile = props => {
     var totalQuantity =
       entries &&
       entries.data.length > 0 &&
-      entries.data.map(function(elem) {
+      entries.data.map(function (elem) {
         return elem.quantity;
       });
     const sumOfQuantity = totalQuantity.reduce(
@@ -108,7 +108,8 @@ const CustomerProfile = props => {
   useEffect(async () => {
     await getMilkDataByUser();
   }, []);
-  console.log(price);
+
+
 
   return (
     <>
@@ -175,8 +176,8 @@ const CustomerProfile = props => {
                   }
                   columns={[
                     { title: "Index", field: "index" },
-                    { title: "Name", field: "name" },
-                    { title: "Email", field: "email" },
+                    // { title: "Name", field: "name" },
+                    // { title: "Email", field: "email" },
                     { title: "Quantity", field: "quantity" },
                     { title: "Date", field: "date" }
                   ]}

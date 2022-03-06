@@ -3,61 +3,50 @@ import MaterialTable from "material-table";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import axios from "axios";
 import { Card, CardHeader, Table, Container, Row } from "reactstrap";
 import Header from "components/Headers/Header";
-import { connect } from "react-redux";
-
+import { connect, useDispatch, useSelector } from "react-redux";
 import {
-  _getAllUsers,
-  _postUser,
-  _updateUser,
-  _deleteUser
-} from "../../Redux/Actions/user.action";
-const UserTable = props => {
+  getAllMilkTypes,
+  postMilkTypes,
+  updateMilkTypes,
+  deleteMilkTypes,
+  singleMilkType
+} from "../../Redux/Actions/milktype.action";
+const MilkTypeManagment = props => {
+  const dispatch = useDispatch();
+
+  const milkTypeData = useSelector(state => state.milkTypeReducer.milkTypeData);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
   const [entries, setEntries] = useState({
     data: [
       {
         id: "",
-        name: "",
-        email: "",
-        mobile: "",
-        role: "",
-        password: ""
+        Milktype: "",
+        Price: ""
       }
     ]
   });
   const snackbarClose = e => {
     setSnackbarOpen(false);
-    getUsers();
+    getMilkType();
   };
-  const getUsers = async () => {
-    await props
-      ._getAllUsers()
-
-      .then(response => {
-        let data = [];
-        response.data.forEach(el => {
-          data.push({
-            id: el._id,
-            name: el.name,
-            email: el.email,
-            mobile: el.mobile,
-            password: el.password,
-            role: el.role
-          });
-        });
-        setEntries({ data: data });
-      })
-      .catch(function (error) {
-        console.log(error);
+  const getMilkType = async () => {
+    let data = [];
+    milkTypeData.forEach(el => {
+      data.push({
+        id: el._id,
+        Milktype: el.Milktype,
+        Price: el.Price
       });
+    });
+    setEntries({ data: data });
   };
   useEffect(() => {
-    getUsers();
-  }, []);
+    dispatch(getAllMilkTypes());
+    getMilkType();
+  }, [milkTypeData]);
   return (
     <>
       <Header />
@@ -69,14 +58,10 @@ const UserTable = props => {
               <CardHeader className="border-0"></CardHeader>
               <Table className="align-items-center table-flush" responsive>
                 <MaterialTable
-                  title="User Management"
+                  title="Milktype Management"
                   columns={[
-                    { title: "Name", field: "name" },
-                    { title: "Email", field: "email" },
-                    { title: "Mobile", field: "mobile" },
-
-                    { title: "Role", field: "role" },
-                    { title: "Password", field: "password" }
+                    { title: "Milktype", field: "Milktype" },
+                    { title: "Price", field: "Price" }
                   ]}
                   options={{
                     exportButton: true
@@ -89,12 +74,11 @@ const UserTable = props => {
                           resolve();
                           const data = [...entries.data];
                           data[data.indexOf(oldData)] = newData;
-                          props
-                            ._updateUser(oldData, newData)
+                          dispatch(updateMilkTypes(oldData, newData))
                             .then(res => {
                               setSnackbarOpen(true);
-                              setSnackbarMsg("User Updated");
-                              getUsers();
+                              setSnackbarMsg("Milk type Updated");
+                              getMilkType();
                             })
                             .catch(err => {
                               setSnackbarOpen(true);
@@ -108,13 +92,11 @@ const UserTable = props => {
                         setTimeout(() => {
                           resolve();
                           const data = [...entries.data];
-
-                          props
-                            ._postUser(newData)
+                          dispatch(postMilkTypes(newData))
                             .then(res => {
                               setSnackbarOpen(true);
-                              setSnackbarMsg("User Added");
-                              getUsers();
+                              setSnackbarMsg("Milk type Added");
+                              getMilkType();
                             })
                             .catch(err => {
                               setSnackbarOpen(true);
@@ -129,17 +111,12 @@ const UserTable = props => {
                           resolve();
                           const data = [...entries.data];
                           data.splice(data.indexOf(oldData), 1);
-                          props
-                            ._deleteUser(oldData)
-                            .then(res => {
-                              setSnackbarOpen(true);
-                              setSnackbarMsg("User Deleted");
-                              getUsers();
-                            })
-                            .catch(err => {
-                              setSnackbarOpen(true);
-                              setSnackbarMsg("Someting went wrong");
-                            });
+                          dispatch(deleteMilkTypes(oldData));
+
+                          setSnackbarOpen(true);
+                          setSnackbarMsg("Milk type Deleted");
+                          getMilkType();
+
                           setEntries({ ...entries, data });
                         }, 600);
                       })
@@ -175,16 +152,5 @@ const UserTable = props => {
     </>
   );
 };
-// const mapStateToProps = state => {
-//   console.log(state.userData.users, "state");
 
-//   return {
-//     userData: state.userData.users
-//   };
-// };
-export default connect(null, {
-  _getAllUsers,
-  _postUser,
-  _updateUser,
-  _deleteUser
-})(UserTable);
+export default connect(state => {})(MilkTypeManagment);

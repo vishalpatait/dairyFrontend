@@ -72,6 +72,8 @@ class AddCustomerMilkModal extends React.Component {
     let { userData, addCustomerMilkModal } = this.props;
 
     const enabled = !this.state.quantityError;
+    console.log(userData, "userData");
+
     return (
       <>
         <Row>

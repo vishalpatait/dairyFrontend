@@ -20,7 +20,7 @@ import Index from "views/Index.js";
 import Icons from "views/examples/Icons.js";
 import UserTable from "./ReactViews/Admin/UserTable";
 import CustomerTable from "./ReactViews/Admin/CustomerTable";
-import CustomerProfile from "./ReactViews/Admin/CustomerProfile";
+import MilkTypeManagment from "./ReactViews/Admin/MilkTypeManagment";
 
 var routes = [
   {
@@ -44,7 +44,13 @@ var routes = [
     component: CustomerTable,
     layout: "/admin"
   },
-
+  {
+    path: "/milk-table",
+    name: "Milk types",
+    icon: "ni ni-tv-2 text-primary",
+    component: MilkTypeManagment,
+    layout: "/admin"
+  },
   {
     path: "/icons",
     name: "Icons",

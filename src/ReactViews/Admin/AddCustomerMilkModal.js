@@ -15,15 +15,22 @@ import {
   Col,
   Button
 } from "reactstrap";
-import axios from "axios";
-// import { Button } from "@material-ui/core";
+import {
+  DropdownMenu,
+  DropdownItem,
+  UncontrolledDropdown,
+  DropdownToggle,
+  Nav,
+  Media
+} from "reactstrap";
 import { connect } from "react-redux";
 import { _postMilk } from "../../Redux/Actions/user.action";
 class AddCustomerMilkModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      quantity: ""
+      quantity: "",
+      milkType: ""
     };
   }
   toggleModal = () => {
@@ -31,6 +38,8 @@ class AddCustomerMilkModal extends React.Component {
     this.props.getMilkDataByUser();
   };
   changeHandler = e => {
+    console.log(e, "itm.Milktype");
+
     this.setState({ [e.target.name]: e.target.value });
   };
   handleData = () => {
@@ -68,11 +77,17 @@ class AddCustomerMilkModal extends React.Component {
       ? this.setState({ quantityError: "" })
       : this.setState({ quantityError: "Please enter numbers only" });
   };
+  milkHandler = e => {
+    console.log(e.target.value, "itm.Milktype");
+  };
   render() {
-    let { userData, addCustomerMilkModal } = this.props;
+    let { userData, addCustomerMilkModal, milkTypeData } = this.props;
 
     const enabled = !this.state.quantityError;
-    console.log(userData, "userData");
+    const user =
+      userData && userData.user && userData.user.map(data => data.customer);
+    const userName = user && user.map(data => data.name);
+    console.log(this.state.milkType, "milkTypeData");
 
     return (
       <>
@@ -88,11 +103,7 @@ class AddCustomerMilkModal extends React.Component {
                 <Card className="bg-secondary shadow border-0">
                   <CardHeader className="bg-transparent pb-5">
                     <div className="text-muted text-center mt-5 mb-3 primary ">
-                      <h3>
-                        {" "}
-                        Customer :
-                        {userData && userData.name ? userData.name : ""}
-                      </h3>
+                      <h3> Customer :{userName ? userName : ""}</h3>
                     </div>
                   </CardHeader>
                   <CardBody className="px-lg-5 py-lg-5">
@@ -113,6 +124,44 @@ class AddCustomerMilkModal extends React.Component {
                             onKeyPress={evt => this._onlyNumberrr(evt)}
                           />
                         </InputGroup>
+                        <Nav
+                          className="align-items-center d-none d-md-flex"
+                          navbar
+                        >
+                          <UncontrolledDropdown nav>
+                            <DropdownToggle className="pr-0" nav>
+                              <Media className="align-items-center">
+                                <span className="avatar avatar-sm rounded-circle">
+                                  <img
+                                    alt="..."
+                                    src={
+                                      require("../../assets/img/theme/team-4-800x800.jpg")
+                                        .default
+                                    }
+                                  />
+                                </span>
+                                <Media className="ml-2 d-none d-lg-block">
+                                  <span className="mb-0 text-sm font-weight-bold">
+                                    Select Milk type
+                                  </span>
+                                </Media>
+                              </Media>
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu-arrow" right>
+                              {milkTypeData &&
+                                milkTypeData.map(itm => (
+                                  <DropdownItem
+                                    name="milkType"
+                                    value={itm.Milktype}
+                                    onClick={e => this.milkHandler(e)}
+                                  >
+                                    <i className="ni ni-user-run" />
+                                    {itm.Milktype}
+                                  </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </Nav>
                       </FormGroup>
 
                       {this.state.quantityError && (

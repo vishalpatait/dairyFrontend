@@ -19,16 +19,17 @@ import {
   Input
 } from "reactstrap";
 import Header from "components/Headers/Header";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import {
   _getMilkByCustomerId,
   _deleteMilkDataOfCustomer
 } from "../../Redux/Actions/user.action";
+import { getAllMilkTypes } from "../../Redux/Actions/milktype.action";
 const CustomerProfile = props => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [addCustomerMilkModal, setAddCustomerMilkModal] = useState(false);
   const [userData, setuserData] = useState({});
-
+  const dispatch = useDispatch();
   const [snackbarMsg, setSnackbarMsg] = useState("");
   const [sum, setSum] = useState("");
   const [price, setPrice] = useState("");
@@ -47,7 +48,6 @@ const CustomerProfile = props => {
 
   const _addMilkModal = data => {
     setAddCustomerMilkModal(true);
-    setuserData(data);
   };
 
   const _addMilkToggleModal = () => {
@@ -70,6 +70,9 @@ const CustomerProfile = props => {
     await axios
       .post("http://localhost:8080/customerMilk/myUser", data)
       .then(response => {
+        console.log(response && response.data, "response &&response.data");
+
+        setuserData(response && response.data);
         let data = [];
         response.data.user.forEach((el, index) => {
           data.push({
@@ -83,7 +86,7 @@ const CustomerProfile = props => {
         });
         setEntries({ data: data });
       })
-      .catch(function (error) {
+      .catch(function(error) {
         console.log(error);
       });
   };
@@ -92,7 +95,7 @@ const CustomerProfile = props => {
     var totalQuantity =
       entries &&
       entries.data.length > 0 &&
-      entries.data.map(function (elem) {
+      entries.data.map(function(elem) {
         return elem.quantity;
       });
     const sumOfQuantity = totalQuantity.reduce(
@@ -107,9 +110,8 @@ const CustomerProfile = props => {
   };
   useEffect(async () => {
     await getMilkDataByUser();
+    dispatch(getAllMilkTypes());
   }, []);
-
-
 
   return (
     <>
@@ -246,6 +248,7 @@ const CustomerProfile = props => {
                     ID={props.match.params.id}
                     userData={userData}
                     getMilkDataByUser={getMilkDataByUser}
+                    milkTypeData={props.milkTypeData}
                   />
                 )}
               </Table>
@@ -257,16 +260,17 @@ const CustomerProfile = props => {
   );
 };
 
-//  const mapStateToProps = state => {
-//     console.log(state, "state");
+const mapStateToProps = state => {
+ 
 
-//     return {
-//       userData: state.userData.customers
-//     };
-//   };
-export default connect(null, {
+  return {
+    milkTypeData: state.milkTypeReducer.milkTypeData
+  };
+};
+export default connect(mapStateToProps, {
   _getMilkByCustomerId,
-  _deleteMilkDataOfCustomer
+  _deleteMilkDataOfCustomer,
+  getAllMilkTypes
 })(CustomerProfile);
 // https://material-table.com/#/docs/features/actions
 // https://mui.com/components/material-icons/

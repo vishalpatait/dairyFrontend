@@ -6,10 +6,6 @@ import {
   CardBody,
   FormGroup,
   Form,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
   Modal,
   Row,
   Col,
@@ -29,7 +25,7 @@ class AddCustomerMilkModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      quantity: "",
+      quantity: 0.5,
       milkType: ""
     };
   }
@@ -37,24 +33,27 @@ class AddCustomerMilkModal extends React.Component {
     this.props._addMilkToggleModal();
     this.props.getMilkDataByUser();
   };
-  changeHandler = e => {
-    console.log(e, "itm.Milktype");
-
-    this.setState({ [e.target.name]: e.target.value });
+  increamentHandler = e => {
+    this.setState({ quantity: this.state.quantity + 0.5 });
+  };
+  decreamentHandler = e => {
+    this.setState({ quantity: this.state.quantity - 0.5 });
   };
   handleData = () => {
-    if (this.state.quantity !== "") {
+    if (this.state.milkType !== "") {
       this._handleSubmit();
+    } else {
+      this.setState({ quantityError: "Please select milk type" });
     }
   };
+
   _handleSubmit() {
     const data = {
-      quantity: parseInt(this.state.quantity),
-      customer: this.props.ID
+      quantity: this.state.quantity,
+      customer: this.props.ID,
+      milkType: this.state.milkType
     };
-    console.log(data, "data");
-    // axios
-    //   .post("http://localhost:8888/customerMilk", data)
+
     this.props
       ._postMilk(data)
       .then(response => {
@@ -69,16 +68,17 @@ class AddCustomerMilkModal extends React.Component {
       });
     this.toggleModal();
   }
-  _onlyNumberrr = e => {
-    const re = /^[0-9]*\.?[0-9]*$/;
-    const { value } = e.target;
-    const checkQuntity = re.test(value);
-    checkQuntity
-      ? this.setState({ quantityError: "" })
-      : this.setState({ quantityError: "Please enter numbers only" });
-  };
+  // _onlyNumberrr = e => {
+  //   const re = /^[0-9]*\.?[0-9]*$/;
+  //   const { value } = e.target;
+  //   const checkQuntity = re.test(value);
+  //   checkQuntity
+  //     ? this.setState({ quantityError: "" })
+  //     : this.setState({ quantityError: "Please enter numbers only" });
+  // };
   milkHandler = e => {
-    console.log(e.target.value, "itm.Milktype");
+    this.setState({ milkType: e.target.value });
+    this.setState({ quantityError: "" });
   };
   render() {
     let { userData, addCustomerMilkModal, milkTypeData } = this.props;
@@ -87,7 +87,6 @@ class AddCustomerMilkModal extends React.Component {
     const user =
       userData && userData.user && userData.user.map(data => data.customer);
     const userName = user && user.map(data => data.name);
-    console.log(this.state.milkType, "milkTypeData");
 
     return (
       <>
@@ -109,7 +108,7 @@ class AddCustomerMilkModal extends React.Component {
                   <CardBody className="px-lg-5 py-lg-5">
                     <Form role="form">
                       <FormGroup className="mb-3">
-                        <InputGroup className="input-group-alternative">
+                        {/* <InputGroup className="input-group-alternative">
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
                               <i className="ni ni-album-2" />
@@ -123,29 +122,50 @@ class AddCustomerMilkModal extends React.Component {
                             onChange={this.changeHandler}
                             onKeyPress={evt => this._onlyNumberrr(evt)}
                           />
-                        </InputGroup>
+                        </InputGroup> */}
+                        <div className="align-items-center ml-5 d-md-flex">
+                          <Button
+                            color="danger"
+                            type="button"
+                            onClick={this.decreamentHandler}
+                          >
+                            <i className="ni ni-fat-delete" />
+                          </Button>
+                          <Button color="secondary" type="button">
+                            {this.state.quantity}
+                          </Button>
+                          <Button
+                            color="info"
+                            type="button"
+                            onClick={this.increamentHandler}
+                          >
+                            <i className="ni ni-zoom-split-in" />
+                          </Button>
+                        </div>
                         <Nav
-                          className="align-items-center d-none d-md-flex"
+                          className="align-items-center  d-md-flex mt-3"
                           navbar
                         >
                           <UncontrolledDropdown nav>
                             <DropdownToggle className="pr-0" nav>
                               <Media className="align-items-center">
                                 <span className="avatar avatar-sm rounded-circle">
-                                  <img
-                                    alt="..."
-                                    src={
-                                      require("../../assets/img/theme/team-4-800x800.jpg")
-                                        .default
-                                    }
-                                  />
+                                  <i className="ni ni-cart" />
                                 </span>
-                                <Media className="ml-2 d-none d-lg-block">
+                                <Media className="ml-2  d-lg-block">
                                   <span className="mb-0 text-sm font-weight-bold">
-                                    Select Milk type
+                                    {this.state.milkType
+                                      ? this.state.milkType
+                                      : "Select Milk type"}
                                   </span>
                                 </Media>
-                              </Media>
+                              </Media>{" "}
+                              {this.state.quantityError && (
+                                <p className="text-danger">
+                                  {" "}
+                                  {this.state.quantityError}{" "}
+                                </p>
+                              )}
                             </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-arrow" right>
                               {milkTypeData &&
@@ -163,13 +183,6 @@ class AddCustomerMilkModal extends React.Component {
                           </UncontrolledDropdown>
                         </Nav>
                       </FormGroup>
-
-                      {this.state.quantityError && (
-                        <p className="text-danger">
-                          {" "}
-                          {this.state.quantityError}{" "}
-                        </p>
-                      )}
 
                       <div className="modal-footer">
                         <div className="mr-6">

@@ -9,7 +9,6 @@ import AdminLayout from "layouts/Admin.js";
 import { Provider } from "react-redux";
 import store from "../src/Redux/store";
 import CustomerProfile from "./ReactViews/Admin/CustomerProfile";
-import UserTable from "./ReactViews/Admin/UserTable";
 import { createBrowserHistory } from "history";
 import Customers from "ReactViews/Users/Customers";
 import Home from "ReactViews/Home/Home";
@@ -21,8 +20,6 @@ function App() {
   // ...................................................................................
   var isLogin = false;
   let token = JSON.parse(localStorage.getItem("x-auth-token"));
-  console.log(token);
-
   if (token) {
     isLogin = true;
   }
@@ -34,9 +31,18 @@ function App() {
             <Switch>
               <Route exact path="/" render={props => <Home {...props} />} />
               <Route path="/login" render={props => <SignIn {...props} />} />
-              <Route path="/forgot-password" render={props => <ForgotPassword {...props} />} />
-              <Route path="/forgot-password" render={props => <ForgotPassword {...props} />} />
-              <Route path="/reset-password/:token" render={props => <ResetPassword {...props} />} />
+              <Route
+                path="/forgot-password"
+                render={props => <ForgotPassword {...props} />}
+              />
+              <Route
+                path="/forgot-password"
+                render={props => <ForgotPassword {...props} />}
+              />
+              <Route
+                path="/reset-password/:token"
+                render={props => <ResetPassword {...props} />}
+              />
               {isLogin && (
                 <Fragment>
                   <Route

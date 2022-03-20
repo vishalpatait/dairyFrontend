@@ -40,6 +40,7 @@ const CustomerProfile = props => {
         name: "",
         email: "",
         quantity: "",
+        milkType: "",
         date: "",
         index: ""
       }
@@ -70,8 +71,6 @@ const CustomerProfile = props => {
     await axios
       .post("http://localhost:8080/customerMilk/myUser", data)
       .then(response => {
-        console.log(response && response.data, "response &&response.data");
-
         setuserData(response && response.data);
         let data = [];
         response.data.user.forEach((el, index) => {
@@ -79,7 +78,7 @@ const CustomerProfile = props => {
             index: ++index,
             id: el._id ? el._id : "",
             // name: el && el.customer.name ? el && el.customer.name : "",
-            // email: el && el.customer.email ? el && el.customer.email : "",
+            milkType: el && el.milkType ? el && el.milkType : "",
             quantity: el.quantity ? el.quantity : "",
             date: el.regDate ? el.regDate : ""
           });
@@ -179,7 +178,7 @@ const CustomerProfile = props => {
                   columns={[
                     { title: "Index", field: "index" },
                     // { title: "Name", field: "name" },
-                    // { title: "Email", field: "email" },
+                    { title: "MilkType", field: "milkType" },
                     { title: "Quantity", field: "quantity" },
                     { title: "Date", field: "date" }
                   ]}
@@ -261,8 +260,6 @@ const CustomerProfile = props => {
 };
 
 const mapStateToProps = state => {
- 
-
   return {
     milkTypeData: state.milkTypeReducer.milkTypeData
   };
